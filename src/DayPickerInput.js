@@ -265,7 +265,7 @@ export default class DayPickerInput extends React.Component {
    */
   updateState(day, value, callback) {
     const { dayPickerProps, onDayChange } = this.props;
-    this.setState({ month: day, value, typedValue: undefined }, () => {
+    this.setState({ month: day, value }, () => {
       if (callback) {
         callback();
       }
@@ -404,15 +404,12 @@ export default class DayPickerInput extends React.Component {
     }
     const { value } = e.target;
     if (value.trim() === '') {
-      this.setState({ value, typedValue: undefined });
       if (onDayChange) onDayChange(undefined, {}, this);
       return;
     }
     const day = parseDate(value, format, dayPickerProps.locale);
     if (!day) {
-      // Day is invalid: we save the value in the typedValue state
-      this.setState({ value, typedValue: value });
-      if (onDayChange) onDayChange(undefined, {}, this);
+      if (onDayChange) onDayChange(this.state.value, {}, this);
       return;
     }
     this.updateState(day, value);
@@ -487,7 +484,7 @@ export default class DayPickerInput extends React.Component {
         selectedDays = null;
       }
       this.setState(
-        { value: '', typedValue: undefined, selectedDays },
+        { value: '', selectedDays },
         this.hideAfterDayClick
       );
       if (onDayChange) {
@@ -497,7 +494,7 @@ export default class DayPickerInput extends React.Component {
     }
 
     const value = formatDate(day, format, dayPickerProps.locale);
-    this.setState({ value, typedValue: undefined, month: day }, () => {
+    this.setState({ value, month: day }, () => {
       if (onDayChange) {
         onDayChange(day, modifiers, this);
       }
@@ -566,7 +563,7 @@ export default class DayPickerInput extends React.Component {
           ref={el => (this.input = el)}
           placeholder={this.props.placeholder}
           {...inputProps}
-          value={this.state.typedValue || this.state.value}
+          value={this.state.value}
           onChange={this.handleInputChange}
           onFocus={this.handleInputFocus}
           onBlur={this.handleInputBlur}
